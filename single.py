@@ -104,8 +104,7 @@ print(f'Rotation by: {rotate_deg} degrees')
 # Rotate the image
 img_rotated = rotate_bound(img_rotated, (-1) * rotate_deg, inter=cv2.INTER_LANCZOS4)
 
-# Display images (plot)
-height, width, channels = img.shape
+# Display image_array (plot)
 fig, (ax1, ax2) = plt.subplots(1, 2)
 fig.canvas.manager.set_window_title(path.name)
 fig.set_figheight(6)
@@ -115,7 +114,7 @@ ax2.imshow(img_rotated)
 plt.tight_layout()
 plt.show()
 
-# # Display images
+# # Display image_array
 # cv2.imshow('img', img)
 # cv2.imshow('rotated', img_rotated)
 # cv2.waitKey(0)

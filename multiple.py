@@ -35,11 +35,13 @@ def rotate_bound(image, angle, inter):
     # perform the actual rotation and return the image
     return cv2.warpAffine(image, M, (nW, nH), flags=inter)
 
-
-def detect_strong_lines(image):
-    lines = cv2.HoughLines(edges, rho=1, theta=np.pi / 180, threshold=250)
+# detects ~30deg offset 1, 2.2
+def detect_strong_hlines(image):
+    lines = cv2.HoughLines(image, rho=1, theta=np.pi / 180, threshold=200, min_theta=1, max_theta=2.2)
 
     # Convert to 2d array
+    if lines is None:
+        return None
     lines = lines[:, 0, :]
 
     # Filter out lines_detected that are too similar - i.e. close by pixels with similar angle
@@ -58,6 +60,18 @@ def detect_strong_lines(image):
     return strong_lines
 
 
+def plot_images(images: list, figure_name: str = 'fig'):
+    img1, img2 = images
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.canvas.manager.set_window_title(figure_name)
+    fig.set_figheight(6)
+    fig.set_figwidth(12)
+    ax1.imshow(img1)
+    ax2.imshow(img2)
+    plt.tight_layout()
+    plt.show()
+
+
 def display_lines(image, lines, color=(255, 0, 0)):
     for line in lines:
         rho = line[0]
@@ -74,25 +88,28 @@ def display_lines(image, lines, color=(255, 0, 0)):
     return image
 
 
-# Import images
+# Import image_array
 pattern = 'images/*.png'
 paths = glob.glob(pattern)
-images = [cv2.imread(path) for path in paths]
+image_array = [cv2.imread(path) for path in paths]
 filenames = [os.path.basename(path) for path in paths]
 
-for img, filename in zip(images, filenames):
+for img, filename in zip(image_array, filenames):
     print(f'File: {filename}')
+    # Create copy of img for the output
+    img_rotated = img.copy()
+
     # Convert to greyscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Canny edge detection
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
-    # Create copy of img for the output
-    img_rotated = img.copy()
-
     # Detect strong lines
-    lines_detected = detect_strong_lines(img)
+    lines_detected = detect_strong_hlines(edges)
+    if lines_detected is None:
+        print('No lines detected, no rotation.')
+        continue
     print(f'Detected {lines_detected.shape[0]} strong lines =\n{lines_detected}')
 
     # Add lines_detected to the original img
@@ -102,22 +119,18 @@ for img, filename in zip(images, filenames):
     theta_values = lines_detected[:, 1]
     rad_mode = stat.mode(theta_values)
     deg_mode = math.degrees(rad_mode)
-    rotate_deg = (-1) * (90 - deg_mode)
+    rotate_deg = 90 - deg_mode
+
+    print(f'Deg_mode = {deg_mode}')
+    if abs(rotate_deg) <= 0.5:
+        print(f'Document is off by {rotate_deg} degrees - too low, not rotating.\n')
+        continue
     print(f'Rotation by: {rotate_deg} degrees\n')
 
     # Rotate
-    img_rotated = rotate_bound(img_rotated, (-1) * rotate_deg, inter=cv2.INTER_LANCZOS4)
+    img_rotated = rotate_bound(img_rotated, rotate_deg, inter=cv2.INTER_LANCZOS4)
 
-    # # Display images (plot)
-    # height, width, channels = img.shape
-    # fig, (ax1, ax2) = plt.subplots(1, 2)
-    # fig.canvas.manager.set_window_title(filename)
-    # fig.set_figheight(6)
-    # fig.set_figwidth(12)
-    # ax1.imshow(img)
-    # ax2.imshow(img_rotated)
-    # plt.tight_layout()
-    # plt.show()
+    plot_images([img, img_rotated], filename)
 
     # Save the rotated image
     output_filename = os.path.splitext(filename)[0] + '-rotated.png'
