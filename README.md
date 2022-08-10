@@ -40,6 +40,8 @@ python main.py
 
 - matplotlib 3.5.2
 
+- All dependencies in *conda_environment.yml*
+
 # Todo
 
 - [x] Line detection
