@@ -1,5 +1,3 @@
-# Note: numpy uses (y,x) convention but most OpenCV functions use (x,y)
-
 import cv2
 import numpy as np
 import math
@@ -10,8 +8,16 @@ import os
 import pathlib
 
 
-# From imutils, added a parameter for specifying the interpolation method
-def rotate_bound(image, angle, inter):
+def rotate_bound(image: np.ndarray, angle: float, inter: int) -> np.ndarray:
+    """
+    Rotates @image by @angle.
+    From imutils, added the parameter @inter for specifying the interpolation method.
+    https://github.com/PyImageSearch/imutils/blob/master/imutils/convenience.py
+    :param image: Original image that we want to rotate
+    :param angle: The angle we want to rotate by
+    :param inter: Interpolation method
+    :return: Rotated image, without any information loss
+    """
     # grab the dimensions of the image and then determine the
     # center
     (h, w) = image.shape[:2]
@@ -35,8 +41,14 @@ def rotate_bound(image, angle, inter):
     # perform the actual rotation and return the image
     return cv2.warpAffine(image, M, (nW, nH), flags=inter)
 
-# detects ~30deg offset 1, 2.2
-def detect_strong_hlines(image):
+
+def detect_strong_hlines(image: np.ndarray) -> np.ndarray:
+    """
+    Detects horizontal lines in @image. Only lines with 30deg offset from a straight line are considered.
+    For a group of similar lines at the same location pick outs the most confident one.
+    :param image: Canny edge of the original image
+    :return: 2d array of rho,theta pairs (one pair for each line detected)
+    """
     lines = cv2.HoughLines(image, rho=1, theta=np.pi / 180, threshold=200, min_theta=1, max_theta=2.2)
 
     # Convert to 2d array
@@ -61,6 +73,11 @@ def detect_strong_hlines(image):
 
 
 def plot_images(images: list, figure_name: str = 'fig'):
+    """
+    Plots 2 images, together in one mpl figure.
+    :param images: 2 element list, 1st element - original img with lines, 2nd - rotated image
+    :param figure_name: Name for the figure
+    """
     img1, img2 = images
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.canvas.manager.set_window_title(figure_name)
@@ -72,7 +89,14 @@ def plot_images(images: list, figure_name: str = 'fig'):
     plt.show()
 
 
-def display_lines(image, lines, color=(255, 0, 0)):
+def draw_lines(image: np.ndarray, lines: np.ndarray, color=(255, 0, 0)) -> np.ndarray:
+    """
+    Draws @lines to @image.
+    :param image: Image we want to add lines to
+    :param lines: 2d array of rho,theta value pairs (one for each line)
+    :param color: Color of the lines
+    :return: Image with lines
+    """
     for line in lines:
         rho = line[0]
         theta = line[1]
@@ -89,7 +113,7 @@ def display_lines(image, lines, color=(255, 0, 0)):
 
 
 # Import image_array
-pattern = 'images/*.png'
+pattern = 'input_images/*.png'
 paths = glob.glob(pattern)
 image_array = [cv2.imread(path) for path in paths]
 filenames = [os.path.basename(path) for path in paths]
@@ -105,7 +129,7 @@ for img, filename in zip(image_array, filenames):
     # Canny edge detection
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
-    # Detect strong lines
+    # Detect strong horizontal lines
     lines_detected = detect_strong_hlines(edges)
     if lines_detected is None:
         print('No lines detected, no rotation.')
@@ -113,15 +137,16 @@ for img, filename in zip(image_array, filenames):
     print(f'Detected {lines_detected.shape[0]} strong lines =\n{lines_detected}')
 
     # Add lines_detected to the original img
-    img = display_lines(img, lines_detected, color=(0, 255, 0))
+    img = draw_lines(img, lines_detected, color=(0, 255, 0))
 
     # Calculate the rotation degree
     theta_values = lines_detected[:, 1]
     rad_mode = stat.mode(theta_values)
     deg_mode = math.degrees(rad_mode)
     rotate_deg = 90 - deg_mode
-
     print(f'Deg_mode = {deg_mode}')
+
+    # If the document is straight, dont rotate
     if abs(rotate_deg) <= 0.5:
         print(f'Document is off by {rotate_deg} degrees - too low, not rotating.\n')
         continue
@@ -130,6 +155,7 @@ for img, filename in zip(image_array, filenames):
     # Rotate
     img_rotated = rotate_bound(img_rotated, rotate_deg, inter=cv2.INTER_LANCZOS4)
 
+    # Plot result
     plot_images([img, img_rotated], filename)
 
     # Save the rotated image
