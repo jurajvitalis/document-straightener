@@ -2,17 +2,19 @@
 
 ![Screenshot](/assets/showcase.png)
 
-## How to run it
+A script I developed in collaboration with my PwC colleagues. We had a lot of invoices and similarly structured documents that were to be annotated and later used in NLP models. A large portion of the documents were crooked, they needed to be straightened. This script solved the problem.
+
+## How to use the script
 
 1. Put .png of the document you want to rotate in *input_images*
 
-2. Run python main.py
+2. ```bash
+   python main.py
+   ```
 
-```bash
-python main.py
-```
+3. The straightened documents are stored in *output*
 
-## How does it work
+## How does the script work
 
 1. Loads .png images from *input_images* folder
 
@@ -26,11 +28,11 @@ python main.py
 
 4. Calculates the mode value of the offset of all lines from a straight line
 
-5. Depeding on threshold (0.5 deg), rotates the image
+5. Depeding on the threshold (0.5 deg), rotates the image
 
 6. Plots the result
 
-7. The rotated image is saved in *output* folder
+7. Saves the straightened images in *output* folder
 
 # Built with
 
@@ -43,14 +45,3 @@ python main.py
 - matplotlib 3.5.2
 
 - All dependencies in *conda_environment.yml*
-
-# Todo
-
-- [x] Line detection
-- [x] Slope detection
-- [x] Straightening documents
-- [x] Nice output (img with lines/result)
-- [x] multiple input > output
-- [x] Figure out angle threshold when a document shouldnt be rotated
-- [ ] Handle cases where the document is oriented vertically
-  - [ ] Add a 'vertical mode' , to which we swap if more vlines than hlines are detected
