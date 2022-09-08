@@ -1,5 +1,7 @@
 # Document offset detection
 
+![Screenshot](/assets/showcase.png)
+
 ## How to run it
 
 1. Put .png of the document you want to rotate in *input_images*
