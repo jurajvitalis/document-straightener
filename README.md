@@ -1,4 +1,4 @@
-# Document offset detection
+# Document straightener
 
 ![Screenshot](/assets/showcase.png)
 
