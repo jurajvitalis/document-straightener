@@ -2,21 +2,25 @@
 
 ![Screenshot](/assets/showcase.png)
 
-A script I developed in collaboration with my PwC colleagues. We had a lot of invoices and similarly structured documents that were to be annotated and later used in NLP models. A large portion of the documents were crooked, they needed to be straightened. This script solved the problem.
+A script I developed in collaboration with my PwC colleagues. We had a lot of invoices and similarly structured documents that were to be annotated and later used in NLP models. A large portion of the documents were crooked, they needed to be straightened without information loss. This script solved the problem.
 
 ## How to use the script
 
-1. Put .png of the document you want to rotate in *input_images*
+1. Make sure you have all the dependencies from *conda_environment.yml*
 
-2. ```bash
+2. Put .png of the document you want to straighten in the *input_images* folder
+
+3. ```bash
    python main.py
    ```
 
-3. The straightened documents are stored in *output*
+4. The straightened documents will be stored in the *output* folder
 
 ## How does the script work
 
-1. Loads .png images from *input_images* folder
+1. Loads .png images from the *input_images* folder
+   
+   For each image then:
 
 2. Performs canny edge detection
 
@@ -32,7 +36,7 @@ A script I developed in collaboration with my PwC colleagues. We had a lot of in
 
 6. Plots the result
 
-7. Saves the straightened images in *output* folder
+7. Saves the straightened image in the *output* folder
 
 # Built with
 
