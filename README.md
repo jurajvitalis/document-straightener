@@ -2,23 +2,23 @@
 
 ![Screenshot](/assets/showcase.png)
 
-A script I developed in collaboration with my PwC colleagues. We had a lot of invoices and similarly structured documents that were to be annotated and later used in NLP models. A large portion of the documents were crooked, they needed to be straightened without information loss. This script solved the problem.
+A script I developed in collaboration with my PwC colleagues. We had a lot of invoices and similarly structured documents that were to be annotated and later used in NLP models. A large portion of the documents were crooked, and they needed to be straightened without information loss. This script solved the problem.
 
 ## How to use the script
 
-1. Make sure you have all the dependencies from *conda_environment.yml*
+1. Make sure you have all the dependencies from `conda_environment.yml`
 
-2. Put .png of the document you want to straighten in the *input_images* folder
+2. Put .png of the document you want to straighten in the `input_images` folder
 
 3. ```bash
    python main.py
    ```
 
-4. The straightened documents will be stored in the *output* folder
+4. The straightened documents will be stored in the `output` folder
 
 ## How does the script work
 
-1. Loads .png images from the *input_images* folder
+1. Loads .png images from the `input_images` folder
    
    For each image then:
 
@@ -36,7 +36,7 @@ A script I developed in collaboration with my PwC colleagues. We had a lot of in
 
 6. Plots the result
 
-7. Saves the straightened image in the *output* folder
+7. Saves the straightened image in the `output` folder
 
 # Built with
 
@@ -48,4 +48,4 @@ A script I developed in collaboration with my PwC colleagues. We had a lot of in
 
 - matplotlib 3.5.2
 
-- All dependencies in *conda_environment.yml*
+- All dependencies in `conda_environment.yml`
