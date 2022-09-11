@@ -6,7 +6,11 @@ A script I developed in collaboration with my PwC colleagues. We had a lot of in
 
 ## How to use the script
 
-1. Make sure you have all the dependencies from `conda_environment.yml`
+1. Make sure you have all the dependencies in `conda_environment.yml`, if not you can build the conda environment this script was developed in:
+   
+   ```bash
+   conda env create --name envname --file=environment.yml
+   ```
 
 2. Put .png of the document you want to straighten in the `input_images` folder
 
